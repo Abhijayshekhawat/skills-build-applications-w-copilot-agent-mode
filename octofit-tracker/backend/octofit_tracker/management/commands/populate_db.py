@@ -1,18 +1,24 @@
 from django.core.management.base import BaseCommand
 from octofit_tracker.models import User, Team, Activity, Leaderboard, Workout
+from django.conf import settings
+from pymongo import MongoClient
 from datetime import timedelta
 from bson import ObjectId
 
 class Command(BaseCommand):
-    help = 'Populate the database with test data for users, teams, activity, leaderboard, and workouts'
+    help = 'Populate the database with test data for users, teams, activities, leaderboard, and workouts'
 
     def handle(self, *args, **kwargs):
-        # Clear existing data
-        User.objects.all().delete()
-        Team.objects.all().delete()
-        Activity.objects.all().delete()
-        Leaderboard.objects.all().delete()
-        Workout.objects.all().delete()
+        # Connect to MongoDB
+        client = MongoClient(settings.DATABASES['default']['HOST'], settings.DATABASES['default']['PORT'])
+        db = client[settings.DATABASES['default']['NAME']]
+
+        # Drop existing collections
+        db.users.drop()
+        db.teams.drop()
+        db.activity.drop()
+        db.leaderboard.drop()
+        db.workouts.drop()
 
         # Create users
         users = [
@@ -25,10 +31,13 @@ class Command(BaseCommand):
         User.objects.bulk_create(users)
 
         # Create teams
-        team = Team(_id=ObjectId(), name='Blue Team')
-        team.save()
-        team.members = users
-        team.save()
+        team1 = Team(_id=ObjectId(), name='Blue Team')
+        team2 = Team(_id=ObjectId(), name='Gold Team')
+        # Directly assign members as a list of user references
+        team1.members = users[:3]
+        team2.members = users[3:]
+        team1.save()
+        team2.save()
 
         # Create activities
         activities = [
