@@ -25,6 +25,7 @@ SECRET_KEY = "django-insecure-yis9%8(0r3=#())%cbntv*u9785-=dh1(@+y#z^i)zu=ox$1@c
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
+# Allow all hosts
 ALLOWED_HOSTS = ["*"]
 
 
@@ -76,7 +77,7 @@ WSGI_APPLICATION = "octofit_tracker.wsgi.application"
 # Database
 # https://docs.djangoproject.com/en/5.2/ref/settings/#databases
 
-# Database settings for MongoDB using Djongo
+# Database configuration for MongoDB
 DATABASES = {
     "default": {
         "ENGINE": "djongo",
@@ -128,5 +129,19 @@ STATIC_URL = "static/"
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
-# Enable CORS
+# Enable CORS to allow all origins, methods, and headers
 CORS_ALLOW_ALL_ORIGINS = True
+CORS_ALLOW_METHODS = [
+    "GET",
+    "POST",
+    "PUT",
+    "PATCH",
+    "DELETE",
+    "OPTIONS",
+]
+CORS_ALLOW_HEADERS = [
+    "content-type",
+    "authorization",
+    "x-csrftoken",
+    "x-requested-with",
+]
